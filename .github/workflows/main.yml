@@ -14,7 +14,7 @@ jobs:
         uses: lumiastudios/databricks-asset-bundles-deploy@v1.0.0  # or use databricks/setup-cli and CLI
         with:
           working-directory: .           # adjust if your config is in a subfolder
-          databricks-host: ${{ secrets.DATABRICKS_HOST }}
+          databricks-host: 'https://dbc-c4cff0e8-cbbc.cloud.databricks.com/'
           databricks-bundle-env: dev  # or "dev", "stage" etc. as per your databricks.yml
           authentication-type: token
-          databricks-token: ${{ secrets.DATABRICKS_TOKEN }}
+          databricks-token: 'dapia814593c2308c960e8a32a2d3f5aaa6a'
