@@ -1,0 +1,20 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy Asset Bundle
+        uses: lumiastudios/databricks-asset-bundles-deploy@v1.0.0  # or use databricks/setup-cli and CLI
+        with:
+          working-directory: .           # adjust if your config is in a subfolder
+          databricks-host: ${{ secrets.DATABRICKS_HOST }}
+          databricks-bundle-env: dev  # or "dev", "stage" etc. as per your databricks.yml
+          authentication-type: token
+          databricks-token: ${{ secrets.DATABRICKS_TOKEN }}
