@@ -13,7 +13,7 @@ jobs:
       - name: Deploy Asset Bundle
         uses: lumiastudios/databricks-asset-bundles-deploy@v1.0.0  # or use databricks/setup-cli and CLI
         with:
-          working-directory: .           # adjust if your config is in a subfolder
+          working-directory: 'test/'           # adjust if your config is in a subfolder
           databricks-host: 'https://dbc-c4cff0e8-cbbc.cloud.databricks.com/'
           databricks-bundle-env: dev  # or "dev", "stage" etc. as per your databricks.yml
           authentication-type: token
