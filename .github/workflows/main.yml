@@ -1,20 +1,47 @@
+name: Build Python Wheel
+
 on:
+  workflow_dispatch:
   push:
     branches:
-      - main
+      - main  # or your default branch
 
 jobs:
-  deploy:
+  build-wheel:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy Asset Bundle
-        uses: lumiastudios/databricks-asset-bundles-deploy@v1.0.0  # or use databricks/setup-cli and CLI
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          working-directory: 'test/'           # adjust if your config is in a subfolder
-          databricks-host: 'https://dbc-c4cff0e8-cbbc.cloud.databricks.com/'
-          databricks-bundle-env: dev  # or "dev", "stage" etc. as per your databricks.yml
-          authentication-type: token
-          databricks-token: 'dapia814593c2308c960e8a32a2d3f5aaa6a'
+          python-version: '3.x'
+
+      - name: Clean previous builds
+        run: |
+          rm -rf dist build *.egg-info
+
+      - name: Install packaging tools
+        run: |
+          python -m pip install --upgrade pip build wheel setuptools
+
+      - name: Build wheel (prefers pyproject.toml)
+        run: |
+          if [ -f "pyproject.toml" ]; then
+            python -m build --wheel
+          elif [ -f "setup.py" ]; then
+            python setup.py bdist_wheel
+          else
+            echo "No setup.py or pyproject.toml found!" && exit 1
+          fi
+
+      - name: List whl files created
+        run: ls -lh dist/
+
+      - name: Upload wheel file(s)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-files
+          path: dist/*.whl
