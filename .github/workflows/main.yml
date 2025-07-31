@@ -9,6 +9,7 @@ on:
 jobs:
   build-wheel:
     runs-on: ubuntu-latest
+    environment: databricks
   
     defaults:
       run:
@@ -45,8 +46,23 @@ jobs:
       - name: List whl files created
         run: ls -lh dist/
 
-      - name: Upload wheel file(s)
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheel-files
-          path: dist/*.whl
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+      
+      - name: Get wheel filename
+        id: get_wheel
+        run: |
+          WHEEL_FILE=$(ls dist/*.whl)
+          echo "wheel_file=$WHEEL_FILE" >> $GITHUB_OUTPUT
+      
+      - name: Install Databricks CLI
+        run: pip install databricks-cli
+      
+      - name: Upload wheel to Databricks DBFS
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          echo "Uploading ${{ steps.get_wheel.outputs.wheel_file }}"
+          databricks fs cp "${{ steps.get_wheel.outputs.wheel_file }}" dbfs:/FileStore/wheels/$(basename ${{ steps.get_wheel.outputs.wheel_file }}) --overwrite
+
