@@ -63,6 +63,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
+          databricks current-user me
           echo "Uploading ${{ steps.get_wheel.outputs.wheel_file }}"
-          databricks fs cp "${{ steps.get_wheel.outputs.wheel_file }}" dbfs:/FileStore/wheels/$(basename ${{ steps.get_wheel.outputs.wheel_file }}) --overwrite
+          #databricks fs cp "${{ steps.get_wheel.outputs.wheel_file }}" dbfs:/FileStore/wheels/$(basename ${{ steps.get_wheel.outputs.wheel_file }}) --overwrite
 
